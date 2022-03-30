@@ -33,8 +33,12 @@
         name: wordpress_user  #select host, user from mysql.user;
         password: 12345
         priv: 'wordpress_db.*:ALL'
-        host: '%'
+        host: "{{ item }}"
         state: present
+      with_items:
+        - 'localhost'
+        - '127.0.0.1'
+        - '192.168.56.100'  #aceita conexoes desse ip
       become: yes
 
     - name: 'Configurar o acesso externo ao mysql'
