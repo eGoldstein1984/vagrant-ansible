@@ -1,0 +1,19 @@
+---
+- hosts: all
+  tasks:
+  #doc: https://docs.ansible.com/ansible/2.4/mysql_user_module.html
+    - name: 'Cria o banco do MySQL'
+      mysql_db:
+        name: wordpress_db  #verificar: show databases;
+        login_user: root
+        state: present
+      become: yes
+
+    - name: 'Cria o usuário do MySQL'
+      mysql_user:
+        login_user: root
+        name: wordpress_user  #select host, user from mysql.user;
+        password: 12345
+        priv: 'wordpress_db.*:ALL'
+        state: present
+      become: yes

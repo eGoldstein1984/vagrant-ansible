@@ -1,0 +1,8 @@
+[wordpress]
+192.168.56.100
+
+[all:vars]
+ansible_connection=ssh
+ansible_ssh_user=vagrant 
+ansible_ssh_private_key_file=/home/wellington/vagrant/wordpress/.vagrant/machines/wordpress/virtualbox/private_key
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'
