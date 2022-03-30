@@ -1,0 +1,50 @@
+---
+- hosts: database
+  handlers:
+    - name: restart mysql
+      service:
+        name: mysql
+        state: restarted
+      become: yes
+
+  tasks:
+    - name: 'Instalar o Mysql5.7'
+      apt:
+        update_cache: yes  #apt update
+        cache_valid_time: 3600 #1 hora
+        name: "{{ item }}"
+        state: latest
+      become: yes
+      with_items:
+      - mysql-server-5.7
+      - python3-mysqldb
+
+    #doc: https://docs.ansible.com/ansible/2.4/mysql_user_module.html
+    - name: 'Criar o banco do MySQL'
+      mysql_db:
+        name: wordpress_db  #verificar: show databases;
+        login_user: root
+        state: present
+      become: yes
+
+    - name: 'Criar o usuário do MySQL'
+      mysql_user:
+        login_user: root
+        name: wordpress_user  #select host, user from mysql.user;
+        password: 12345
+        priv: 'wordpress_db.*:ALL'
+        host: '%'
+        state: present
+      become: yes
+
+    - name: 'Configurar o acesso externo ao mysql'
+      replace:
+        path: '/etc/mysql/mysql.conf.d/mysqld.cnf'
+        regexp: "{{ item.regex }}"
+        replace: "{{ item.value }}"
+        backup: yes
+      with_items:
+        - { regex: '127.0.0.1', value: '0.0.0.0'}
+      become: yes
+      notify:
+        - restart mysql
