@@ -9,3 +9,7 @@ ansible-playbook play-php.yml -u vagrant -i hosts --private-key .vagrant/machine
 
 ansible-playbook play-php.yml -u vagrant -e "ansible_password=vagrant" -i hosts
 
+#ping
+
+ansible wordpress -i hosts -m ping
+ansible all -i hosts -m ping
