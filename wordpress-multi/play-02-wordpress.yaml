@@ -25,8 +25,8 @@
 
     - name: 'Copiar o arquivo de configuração do wordpress'
       copy:
-        src: '/var/www/wordpress/wp-config-sample.php'
-        dest: '/var/www/wordpress/wp-config.php'
+        src: "{{ wp_installation_dir }}/wp-config-sample.php"
+        dest: "{{ wp_installation_dir }}/wp-config.php"
         owner: www-data
         group: www-data        
         remote_src: yes
@@ -34,15 +34,15 @@
 
     - name: 'Configurar o wp-config com as entradas do banco de dados'     
       replace:
-        path: '/var/www/wordpress/wp-config.php'
+        path: "{{ wp_installation_dir }}/wp-config.php"
         regexp: "{{ item.regex }}"
         replace: "{{ item.value }}"
         backup: yes
       with_items:
-        - { regex: 'database_name_here', value: 'wordpress_db'}
-        - { regex: 'username_here', value: 'wordpress_user'}
-        - { regex: 'password_here', value: '12345'}
-        - { regex: 'localhost', value: '192.168.56.110'}
+        - { regex: 'database_name_here', value: "{{ wp_db_name }}"}
+        - { regex: 'username_here', value: "{{ wp_username }}"}
+        - { regex: 'password_here', value: "{{ wp_user_password }}"}
+        - { regex: 'localhost', value: "{{ wp_db_host_ip }}"}
       become: yes
 
  #   - name: 'Copiar a configuracao do Apache para servir o Wordpress'
@@ -61,7 +61,7 @@
         replace: "{{ item.value }}"
         backup: yes
       with_items:
-        - { regex: '/var/www/html', value: '/var/www/wordpress'}
+        - { regex: '/var/www/html', value: "{{ wp_installation_dir }}" }
       become: yes
       notify:
         - restart apache

@@ -22,7 +22,7 @@
     #doc: https://docs.ansible.com/ansible/2.4/mysql_user_module.html
     - name: 'Criar o banco do MySQL'
       mysql_db:
-        name: wordpress_db  #verificar: show databases;
+        name: "{{ wp_db_name }}"  #verificar: show databases;
         login_user: root
         state: present
       become: yes
@@ -32,13 +32,13 @@
         login_user: root
         name: wordpress_user  #select host, user from mysql.user;
         password: 12345
-        priv: 'wordpress_db.*:ALL'
+        priv: "{{ wp_db_name }}.*:ALL"
         host: "{{ item }}"
         state: present
       with_items:
         - 'localhost'
         - '127.0.0.1'
-        - '192.168.56.100'  #aceita conexoes desse ip
+        - "{{ wp_host_ip }}"  #aceita conexoes desse ip
       become: yes
 
     - name: 'Configurar o acesso externo ao mysql'
